@@ -18,6 +18,46 @@ function mostrarInfo(texto) {
     document.getElementById('info').textContent = texto; 
 } 
  
+// Reto 1. Tabla de coordenadas
+function actualizarTablaCoordenadas() {
+  const tabla = document.getElementById('tablaCoordenadas');
+
+  // Vaciar la tabla antes de actualizarla
+  tabla.innerHTML = '';
+
+  if (puntos.length === 0) {
+    const fila = document.createElement('tr');
+    const celda = document.createElement('td');
+
+    celda.colSpan = 3;
+    celda.textContent = 'Todavía no hay vértices.';
+
+    fila.appendChild(celda);
+    tabla.appendChild(fila);
+
+    return;
+  }
+
+  // Recorrer los puntos
+  puntos.forEach((punto, indice) => {
+    const fila = document.createElement('tr');
+
+    const celdaNumero = document.createElement('td');
+    const celdaLatitud = document.createElement('td');
+    const celdaLongitud = document.createElement('td');
+
+    celdaNumero.textContent = indice + 1;
+    celdaLatitud.textContent = punto[0].toFixed(6);
+    celdaLongitud.textContent = punto[1].toFixed(6);
+
+    fila.appendChild(celdaNumero);
+    fila.appendChild(celdaLatitud);
+    fila.appendChild(celdaLongitud);
+
+    tabla.appendChild(fila);
+  });
+}
+
 function ubicarUsuario() { 
     if(!('geolocation' in navigator)) { 
         mostrarInfo('Tu navegador no soporta geolocalización.'); 
@@ -64,6 +104,8 @@ mapa.on('click', (e) => {
  
     const { lat, lng } = e.latlng; 
     puntos.push([lat, lng]); 
+
+    actualizarTablaCoordenadas();
 
     console.log(puntos);
  

@@ -43,3 +43,61 @@ button:disabled {
 #mapa { 
     flex: 1; 
 } 
+
+
+/* ===== Tabla de coordenadas: Reto 1 ===== */
+section {
+    margin: 14px 16px;
+    padding: 16px;
+    background: #f8fafc;
+    border: 1px solid #dbe3ed;
+    border-radius: 10px;
+}
+
+section h2 {
+    margin: 0 0 12px;
+    color: #1e3a5f;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+section table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 0.9rem;
+}
+
+section th {
+    padding: 11px 14px;
+    background: #1e3a5f;
+    color: white;
+    text-align: left;
+    font-weight: 600;
+}
+
+section td {
+    padding: 10px 14px;
+    color: #334155;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+section tbody tr:nth-child(even) {
+    background: #f1f5f9;
+}
+
+section tbody tr:hover {
+    background: #e8eff7;
+}
+
+section tbody tr:last-child td {
+    border-bottom: none;
+}
+
+section td:first-child {
+    width: 55px;
+    color: #1e3a5f;
+    font-weight: 600;
+}
