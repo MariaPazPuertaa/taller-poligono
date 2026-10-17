@@ -109,13 +109,13 @@ mapa.on('click', (e) => {
 
     console.log(puntos);
  
-    const v = L.circleMarker([lat, lng], { 
-        radius: 6, 
-        color: '#e67e22', 
-        fillOpacity: 1 
-    }).addTo(mapa); 
-    vertices.push(v); 
- 
+    const v = L.circleMarker([lat, lng], {
+        radius: 6,
+        color: selectorColor.value,
+        fillColor: selectorColor.value,
+        fillOpacity: 1
+    }).addTo(mapa);
+
     lineaGuia.setLatLngs(puntos); 
     actualizarBotones(); 
     mostrarInfo(`${puntos.length} vértice(s). Necesitas al menos 3 para cerrar.`); 
@@ -142,9 +142,11 @@ function medir() {
 } 
  
 function cerrarPoligono() { 
-    poligono = L.polygon(puntos, { 
-        color: '#27ae60', 
-        fillOpacity: 0.35 }).addTo(mapa); 
+    poligono = L.polygon(puntos, {
+        color: selectorColor.value,
+        fillColor: selectorColor.value,
+        fillOpacity: 0.35
+    }).addTo(mapa);
 
     lineaGuia.setLatLngs([]); 
     mapa.fitBounds(poligono.getBounds()); 
@@ -192,3 +194,32 @@ function exportar() {
 } 
  
 document.getElementById('btnExportar').addEventListener('click', exportar); 
+
+
+const selectorColor = document.getElementById('colorPoligono');
+
+
+selectorColor.addEventListener('input', (e) => {
+    const color = e.target.value;
+
+    // Cambiar el color del polígono cerrado
+    if (poligono) {
+        poligono.setStyle({
+            color: color,
+            fillColor: color
+        });
+    }
+
+    // Cambiar el color de todos los vértices existentes
+    vertices.forEach((vertice) => {
+        vertice.setStyle({
+            color: color,
+            fillColor: color
+        });
+    });
+
+    // Cambiar el color de la línea guía
+    lineaGuia.setStyle({
+        color: color
+    });
+});

@@ -1,57 +1,53 @@
-body { 
-    margin: 0; 
-    font-family: system-ui, sans-serif; 
-    display: flex; 
-    flex-direction: column; 
-    height: 100vh; 
-} 
-
-header { 
-    padding: 10px 16px; 
-    background: #1e3a5f; 
-    color: white; 
+body {
+    margin: 0;
+    font-family: system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 
-h1 { 
-    margin: 0 0 8px; 
-    font-size: 1.3rem; 
+header {
+    padding: 10px 16px;
+    background: #1e3a5f;
+    color: white;
 }
 
-.controles { 
-    display: flex; 
-    flex-wrap: wrap; 
-    gap: 8px; 
-} 
-
-button { 
-    padding: 6px 12px; 
-    border: none; 
-    border-radius: 4px; 
-    cursor: pointer; 
+h1 {
+    margin: 0 0 8px;
+    font-size: 1.3rem;
 }
 
-button:disabled { 
-    opacity: .5; 
-    cursor: not-allowed; 
+.controles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
-#info { 
-    margin: 8px 0 0; 
-    font-size: .9rem; 
+button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
-#mapa { 
-    flex: 1; 
-} 
+button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
 
+#info {
+    margin: 8px 0 0;
+    font-size: .9rem;
+}
 
-/* ===== Tabla de coordenadas: Reto 1 ===== */
+/* Reto 1. Tabla de coordenadas */
 section {
     margin: 14px 16px;
     padding: 16px;
     background: #f8fafc;
     border: 1px solid #dbe3ed;
     border-radius: 10px;
+    flex-shrink: 0;
 }
 
 section h2 {
@@ -61,12 +57,20 @@ section h2 {
     font-weight: 600;
 }
 
+/* Contenedor para limitar la altura sin perder el ancho */
+.tabla-contenedor {
+    width: 100%;
+    max-height: 110px;
+    overflow-y: auto;
+    overflow-x: auto;
+    border-radius: 8px;
+}
+
+/* Tabla */
 section table {
     width: 100%;
     border-collapse: collapse;
     background: white;
-    border-radius: 8px;
-    overflow: hidden;
     font-size: 0.9rem;
 }
 
@@ -76,6 +80,9 @@ section th {
     color: white;
     text-align: left;
     font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
 section td {
@@ -100,4 +107,34 @@ section td:first-child {
     width: 55px;
     color: #1e3a5f;
     font-weight: 600;
+}
+
+/* El mapa ocupa el espacio restante */
+#mapa {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+}
+
+/* Reto 2. Cambio de color del polígono */
+.control-color {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.control-color input[type="color"] {
+    width: 32px;
+    height: 28px;
+    padding: 2px;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    cursor: pointer;
 }
