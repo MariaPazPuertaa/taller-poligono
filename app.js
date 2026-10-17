@@ -191,16 +191,20 @@ document.getElementById('btnDeshacer').addEventListener('click', deshacerPunto);
 document.getElementById('btnLimpiar').addEventListener('click', limpiar);
 
 
-function exportar() {
-    const nombre = prompt('🗺️ Guardar Polígono\n\nEscribe el nombre de tu polígono:','Mi terreno');
 
-    if (nombre === null || nombre.trim() === '') {
-        mostrarInfo('Exportación cancelada. Escribe un nombre para el polígono.');
+function exportar() {
+    const campoNombre = document.getElementById('nombrePoligono');
+    const nombre = campoNombre.value.trim();
+
+    if (!nombre) {
+        campoNombre.focus();
+        campoNombre.setCustomValidity('Escribe un nombre para el polígono.');
+        campoNombre.reportValidity();
+        campoNombre.setCustomValidity('');
         return;
     }
 
-    const nombrePoligono = nombre.trim();
-    const geojson = aGeoJSON(nombrePoligono);
+    const geojson = aGeoJSON(nombre);
     const texto = JSON.stringify(geojson, null, 2);
 
     const blob = new Blob([texto], {
@@ -208,20 +212,21 @@ function exportar() {
     });
 
     const enlace = document.createElement('a');
-    enlace.href = URL.createObjectURL(blob);
+    const url = URL.createObjectURL(blob);
 
-    // El nombre también se usa para el archivo descargado
-    const nombreArchivo = nombrePoligono.replace(/[<>:"/\\|?*\x00-\x1F]/g, '_');
+    enlace.href = url;
+
+    const nombreArchivo = nombre.replace(/[<>:"/\\|?*\x00-\x1F]/g, '_');
 
     enlace.download = nombreArchivo + '.geojson';
     enlace.click();
 
-    URL.revokeObjectURL(enlace.href);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
 
-    mostrarInfo(`Polígono "${nombrePoligono}" exportado correctamente.`);
+    mostrarInfo(`Polígono "${nombre}" exportado correctamente.`);
 }
 
- 
+
 document.getElementById('btnExportar').addEventListener('click', exportar); 
 
 

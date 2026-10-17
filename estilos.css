@@ -1,3 +1,4 @@
+/* Configuración general de la página */
 body {
     margin: 0;
     font-family: system-ui, sans-serif;
@@ -6,23 +7,27 @@ body {
     height: 100vh;
 }
 
+/* Encabezado de la página */
 header {
     padding: 10px 16px;
     background: #1e3a5f;
     color: white;
 }
 
+/* Título principal */
 h1 {
     margin: 0 0 8px;
     font-size: 1.3rem;
 }
 
+/* Organiza los botones y controles en filas */
 .controles {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
 }
 
+/* Estilo general de los botones */
 button {
     padding: 6px 12px;
     border: none;
@@ -30,17 +35,19 @@ button {
     cursor: pointer;
 }
 
+/* Indica visualmente cuándo un botón está deshabilitado */
 button:disabled {
     opacity: .5;
     cursor: not-allowed;
 }
 
+/* Mensajes informativos para el usuario */
 #info {
     margin: 8px 0 0;
     font-size: .9rem;
 }
 
-/* Reto 1. Tabla de coordenadas */
+/* Reto 1: contenedor de la tabla de coordenadas */
 section {
     margin: 14px 16px;
     padding: 16px;
@@ -50,6 +57,7 @@ section {
     flex-shrink: 0;
 }
 
+/* Título de la sección de coordenadas */
 section h2 {
     margin: 0 0 12px;
     color: #1e3a5f;
@@ -57,7 +65,7 @@ section h2 {
     font-weight: 600;
 }
 
-/* Contenedor para limitar la altura sin perder el ancho */
+/* Limita la altura de la tabla y permite desplazarse para ver más coordenadas */
 .tabla-contenedor {
     width: 100%;
     max-height: 110px;
@@ -66,7 +74,7 @@ section h2 {
     border-radius: 8px;
 }
 
-/* Tabla */
+/* Estilo general de la tabla */
 section table {
     width: 100%;
     border-collapse: collapse;
@@ -74,6 +82,7 @@ section table {
     font-size: 0.9rem;
 }
 
+/* Estilo de los encabezados de la tabla */
 section th {
     padding: 11px 14px;
     background: #1e3a5f;
@@ -85,38 +94,43 @@ section th {
     z-index: 1;
 }
 
+/* Estilo de las celdas con las coordenadas */
 section td {
     padding: 10px 14px;
     color: #334155;
     border-bottom: 1px solid #e2e8f0;
 }
 
+/* Alterna el color de las filas para facilitar la lectura */
 section tbody tr:nth-child(even) {
     background: #f1f5f9;
 }
 
+/* Resalta una fila cuando el cursor pasa sobre ella */
 section tbody tr:hover {
     background: #e8eff7;
 }
 
+/* Elimina el borde inferior de la última fila */
 section tbody tr:last-child td {
     border-bottom: none;
 }
 
+/* Ajusta el ancho y resalta la columna del número de vértice */
 section td:first-child {
     width: 55px;
     color: #1e3a5f;
     font-weight: 600;
 }
 
-/* El mapa ocupa el espacio restante */
+/* Hace que el mapa ocupe el espacio restante de la página */
 #mapa {
     flex: 1;
     min-height: 0;
     width: 100%;
 }
 
-/* Reto 2. Cambio de color del polígono */
+/* Reto 2: organiza y da estilo al control para elegir el color del polígono */
 .control-color {
     display: inline-flex;
     align-items: center;
@@ -127,14 +141,52 @@ section td:first-child {
     color: white;
     font-size: 0.9rem;
     cursor: pointer;
+    box-sizing: border-box;
+    height: 36px;
 }
 
+/* Ajusta el tamaño y la apariencia del selector de color */
 .control-color input[type="color"] {
     width: 32px;
-    height: 28px;
+    height: 26px;
     padding: 2px;
     border: none;
     border-radius: 4px;
     background: transparent;
     cursor: pointer;
+    box-sizing: border-box;
+}
+
+/* Reto 3: organiza y da estilo al campo para escribir el nombre del polígono */
+.control-nombre {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    color: white;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+    height: 36px;
+}
+
+/* Da estilo al campo de texto donde se escribe el nombre del polígono */
+.control-nombre input {
+    width: 150px;
+    padding: 4px 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    background: white;
+    color: #334155;
+    font-size: 0.9rem;
+    outline: none;
+    box-sizing: border-box;
+    height: 26px;
+}
+
+/* Resalta el campo cuando el usuario hace clic para escribir */
+.control-nombre input:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.25);
 }
