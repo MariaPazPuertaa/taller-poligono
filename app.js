@@ -127,12 +127,19 @@ function actualizarBotones() {
     document.getElementById('btnExportar').disabled = poligono === null; 
 } 
 
-function aGeoJSON() { 
-    const anillo = puntos.map(([lat, lng]) => [lng, lat]); 
-    anillo.push(anillo[0]); // cerrar el anillo 
-    return turf.polygon([anillo], { nombre: 'Mi polígono', creado: new 
-    Date().toISOString() }); 
-} 
+
+// Reto 3. Dar la opción al usuario de que pueda ponerle un nombre al polígono
+function aGeoJSON(nombrePoligono = 'Mi polígono') {
+    const anillo = puntos.map(([lat, lng]) => [lng, lat]);
+    anillo.push(anillo[0]);
+
+    return turf.polygon([anillo], {
+        nombre: nombrePoligono,
+        creado: new Date().toISOString()
+    });
+}
+
+
  
 function medir() { 
     const geo = aGeoJSON(); 
@@ -183,15 +190,37 @@ function limpiar() {
 document.getElementById('btnDeshacer').addEventListener('click', deshacerPunto); 
 document.getElementById('btnLimpiar').addEventListener('click', limpiar);
 
-function exportar() { 
-    const texto = JSON.stringify(aGeoJSON(), null, 2); 
-    const blob = new Blob([texto], { type: 'application/geo+json' }); 
-    const enlace = document.createElement('a'); 
-    enlace.href = URL.createObjectURL(blob); 
-    enlace.download = 'poligono.geojson'; 
-    enlace.click(); 
-    setTimeout(() => URL.revokeObjectURL(enlace.href), 1000); 
-} 
+
+function exportar() {
+    const nombre = prompt('🗺️ Guardar Polígono\n\nEscribe el nombre de tu polígono:','Mi terreno');
+
+    if (nombre === null || nombre.trim() === '') {
+        mostrarInfo('Exportación cancelada. Escribe un nombre para el polígono.');
+        return;
+    }
+
+    const nombrePoligono = nombre.trim();
+    const geojson = aGeoJSON(nombrePoligono);
+    const texto = JSON.stringify(geojson, null, 2);
+
+    const blob = new Blob([texto], {
+        type: 'application/geo+json'
+    });
+
+    const enlace = document.createElement('a');
+    enlace.href = URL.createObjectURL(blob);
+
+    // El nombre también se usa para el archivo descargado
+    const nombreArchivo = nombrePoligono.replace(/[<>:"/\\|?*\x00-\x1F]/g, '_');
+
+    enlace.download = nombreArchivo + '.geojson';
+    enlace.click();
+
+    URL.revokeObjectURL(enlace.href);
+
+    mostrarInfo(`Polígono "${nombrePoligono}" exportado correctamente.`);
+}
+
  
 document.getElementById('btnExportar').addEventListener('click', exportar); 
 
