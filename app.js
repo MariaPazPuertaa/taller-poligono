@@ -257,3 +257,71 @@ selectorColor.addEventListener('input', (e) => {
         color: color
     });
 });
+
+
+// Reto 4. Agregar un vértice con la ubicación actual del usuario
+function agregarVerticeUbicacion() {
+
+    // Verificar si el navegador permite obtener la ubicación
+    if (!('geolocation' in navigator)) {
+        mostrarInfo('Tu navegador no soporta geolocalización.');
+        return;
+    }
+
+    mostrarInfo('Obteniendo tu ubicación actual...');
+
+    // Obtener las coordenadas actuales del usuario
+    navigator.geolocation.getCurrentPosition(
+
+        (pos) => {
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+
+            // Crear el punto y agregarlo a la lista de vértices
+            const punto = [lat, lng];
+            puntos.push(punto);
+
+            // Actualizar la tabla de coordenadas
+            actualizarTablaCoordenadas();
+
+            // Dibujar un marcador en el mapa
+            const v = L.circleMarker(punto, {
+                radius: 6,
+                color: selectorColor.value,
+                fillColor: selectorColor.value,
+                fillOpacity: 1
+            }).addTo(mapa);
+
+            vertices.push(v);
+
+            // Actualizar la línea que une los vértices
+            lineaGuia.setLatLngs(puntos);
+
+            // Actualizar el estado de los botones
+            actualizarBotones();
+
+            mostrarInfo(
+                `Vértice agregado: ${lat.toFixed(6)}, ${lng.toFixed(6)}.`
+            );
+        },
+
+        (err) => {
+            const mensajes = {
+                1: 'Permiso denegado. Activa la ubicación en el navegador.',
+                2: 'No se pudo determinar la ubicación.',
+                3: 'Se agotó el tiempo de espera.'
+            };
+
+            mostrarInfo(mensajes[err.code] || 'Error desconocido.');
+        },
+
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+    );
+}
+
+// Asocia la función al botón del Reto 4
+document.getElementById('btnAgregarUbicacion').addEventListener('click', agregarVerticeUbicacion);
