@@ -105,6 +105,8 @@ mapa.on('click', (e) => {
     const { lat, lng } = e.latlng; 
     puntos.push([lat, lng]); 
 
+    guardarPuntos();
+
     actualizarTablaCoordenadas();
 
     console.log(puntos);
@@ -155,6 +157,8 @@ function cerrarPoligono() {
         fillOpacity: 0.35
     }).addTo(mapa);
 
+    guardarPuntos();
+
     lineaGuia.setLatLngs([]); 
     mapa.fitBounds(poligono.getBounds()); 
  
@@ -167,6 +171,7 @@ document.getElementById('btnCerrar').addEventListener('click', cerrarPoligono);
 
 function deshacerPunto() { 
     puntos.pop(); 
+    guardarPuntos();
     mapa.removeLayer(vertices.pop()); 
     lineaGuia.setLatLngs(puntos); 
     actualizarBotones(); 
@@ -175,6 +180,7 @@ function deshacerPunto() {
  
 function limpiar() { 
     puntos = []; 
+    guardarPuntos();
     vertices.forEach((v) => mapa.removeLayer(v)); 
     vertices = []; 
     lineaGuia.setLatLngs([]); 
@@ -281,6 +287,8 @@ function agregarVerticeUbicacion() {
             const punto = [lat, lng];
             puntos.push(punto);
 
+            guardarPuntos();
+
             // Actualizar la tabla de coordenadas
             actualizarTablaCoordenadas();
 
@@ -325,3 +333,70 @@ function agregarVerticeUbicacion() {
 
 // Asocia la función al botón del Reto 4
 document.getElementById('btnAgregarUbicacion').addEventListener('click', agregarVerticeUbicacion);
+
+
+// Reto 5. Guardar los puntos y el estado del polígono
+function guardarPuntos() {
+    localStorage.setItem(
+        'puntosPoligono',
+        JSON.stringify(puntos)
+    );
+
+    localStorage.setItem(
+        'poligonoCerrado',
+        JSON.stringify(poligono !== null)
+    );
+}
+
+// Recuperar los puntos guardados al abrir la página
+function recuperarPuntos() {
+    const datosGuardados = localStorage.getItem('puntosPoligono');
+
+    if (datosGuardados) {
+        puntos = JSON.parse(datosGuardados);
+
+        // Dibujar los vértices recuperados
+        puntos.forEach((punto) => {
+            const v = L.circleMarker(punto, {
+                radius: 6,
+                color: selectorColor.value,
+                fillColor: selectorColor.value,
+                fillOpacity: 1
+            }).addTo(mapa);
+
+            vertices.push(v);
+        });
+
+        // Volver a mostrar la línea y la tabla
+        lineaGuia.setLatLngs(puntos);
+        actualizarTablaCoordenadas();
+        actualizarBotones();
+
+        const cerrado = JSON.parse(localStorage.getItem('poligonoCerrado') || 'false');
+
+        if (cerrado && puntos.length >= 3) {
+            poligono = L.polygon(puntos, {
+            color: selectorColor.value,
+            fillColor: selectorColor.value,
+            fillOpacity: 0.35
+        }).addTo(mapa);
+
+        lineaGuia.setLatLngs([]);
+        mapa.fitBounds(poligono.getBounds());
+
+        const { area, perimetro } = medir();
+
+        poligono.bindPopup(
+            `Área: ${area.toFixed(1)} m²<br>Perímetro: ${perimetro.toFixed(1)} m`
+        );
+
+        mostrarInfo(
+            `Polígono recuperado. Área: ${area.toFixed(1)} m².`
+        );
+    }
+
+        mostrarInfo('Se recuperaron los vértices guardados.');
+    }
+}
+
+recuperarPuntos();
