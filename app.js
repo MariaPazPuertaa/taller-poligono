@@ -496,4 +496,86 @@ document.getElementById('archivoGeoJSON').addEventListener('change', (e) => {
 });
 
 
+/* Reto 7. Detectar si el usuario está dentro o fuera del polígono */
+
+function verificarUbicacion() {
+    // Comprobar que exista un polígono cerrado
+    if (poligono === null) {
+        mostrarInfo('Primero debes dibujar y cerrar el polígono.');
+        return;
+    }
+
+    if (!('geolocation' in navigator)) {
+        mostrarInfo('Tu navegador no soporta geolocalización.');
+        return;
+    }
+
+    mostrarInfo('Comprobando si estás dentro del polígono...');
+
+    navigator.geolocation.getCurrentPosition(
+        (pos) => {
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+
+            // Turf utiliza el orden [longitud, latitud]
+            const puntoUsuario = turf.point([lng, lat]);
+
+            // Convertir el polígono dibujado a GeoJSON
+            const geo = aGeoJSON(
+                document.getElementById('nombrePoligono').value.trim()
+                    || 'Mi polígono'
+            );
+
+            // Comprobar si la ubicación está dentro del polígono
+            const estaDentro = turf.booleanPointInPolygon(
+                puntoUsuario,
+                geo
+            );
+
+            if (estaDentro) {
+                mostrarInfo('Estás DENTRO del polígono.');
+            } else {
+                mostrarInfo('Estás FUERA del polígono.');
+            }
+
+            // Mostrar la ubicación comprobada en el mapa
+            if (marcadorUsuario) {
+                marcadorUsuario.setLatLng([lat, lng]);
+            } else {
+                marcadorUsuario = L.marker([lat, lng])
+                    .addTo(mapa);
+            }
+
+            marcadorUsuario
+                .bindPopup(
+                    estaDentro
+                        ? 'Estás dentro del polígono'
+                        : 'Estás fuera del polígono'
+                )
+                .openPopup();
+
+            mapa.panTo([lat, lng]);
+        },
+        (err) => {
+            const mensajes = {
+                1: 'Permiso denegado. Activa la ubicación en el navegador.',
+                2: 'No se pudo determinar la ubicación.',
+                3: 'Se agotó el tiempo de espera.'
+            };
+
+            mostrarInfo(
+                mensajes[err.code] || 'No se pudo obtener tu ubicación.'
+            );
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+    );
+}
+
+document.getElementById('verificarUbicacion').addEventListener('click', verificarUbicacion);
+
+
 recuperarPuntos();
