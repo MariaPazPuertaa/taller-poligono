@@ -16,7 +16,7 @@
       <button id="btnDeshacer">Deshacer punto</button> 
       <button id="btnLimpiar">Limpiar</button> 
       <button id="btnExportar">Exportar GeoJSON</button> 
-      
+
       <!-- Reto 4: Agrega un vértice usando la ubicación actual -->
       <button id="btnAgregarUbicacion">Agregar vértice aquí</button>
 
@@ -28,6 +28,10 @@
       <label class="control-nombre" for="nombrePoligono">Nombre del polígono
         <input type="text" id="nombrePoligono" placeholder="Ej. Mi terreno" maxlength="60">
       </label>
+      
+      <!-- Reto 6: seleccionar un archivo GeoJSON para importarlo -->
+      <label for="archivoGeoJSON">Importar GeoJSON</label>
+        <input type="file" id="archivoGeoJSON" accept=".geojson,.json,application/geo+json,application/json">
     </div> 
     <p id="info">Haz clic en el mapa para agregar vértices.</p> 
   </header> 

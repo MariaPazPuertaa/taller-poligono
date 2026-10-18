@@ -118,6 +118,8 @@ mapa.on('click', (e) => {
         fillOpacity: 1
     }).addTo(mapa);
 
+    vertices.push(v);
+
     lineaGuia.setLatLngs(puntos); 
     actualizarBotones(); 
     mostrarInfo(`${puntos.length} vértice(s). Necesitas al menos 3 para cerrar.`); 
@@ -169,29 +171,54 @@ function cerrarPoligono() {
 } 
 document.getElementById('btnCerrar').addEventListener('click', cerrarPoligono);
 
-function deshacerPunto() { 
-    puntos.pop(); 
-    guardarPuntos();
-    mapa.removeLayer(vertices.pop()); 
-    lineaGuia.setLatLngs(puntos); 
-    actualizarBotones(); 
-    mostrarInfo(`${puntos.length} vértice(s).`); 
-} 
- 
-function limpiar() { 
-    puntos = []; 
-    guardarPuntos();
-    vertices.forEach((v) => mapa.removeLayer(v)); 
-    vertices = []; 
-    lineaGuia.setLatLngs([]); 
-    if (poligono) { 
-        mapa.removeLayer(poligono); 
-        poligono = null; 
-    } 
+function deshacerPunto() {
+    if (puntos.length === 0 || poligono !== null) {
+        return;
+    }
 
-    actualizarBotones(); 
-    mostrarInfo('Mapa limpio. Haz clic para empezar de nuevo.'); 
-} 
+    puntos.pop();
+
+    const ultimoVertice = vertices.pop();
+
+    if (ultimoVertice) {
+        mapa.removeLayer(ultimoVertice);
+    }
+
+    lineaGuia.setLatLngs(puntos);
+
+    guardarPuntos();
+    actualizarTablaCoordenadas();
+    actualizarBotones();
+
+    mostrarInfo(`${puntos.length} vértice(s).`);
+}
+ 
+function limpiar() {
+    // Eliminar los marcadores de los vértices
+    vertices.forEach((v) => mapa.removeLayer(v));
+    vertices = [];
+
+    // Vaciar los puntos
+    puntos = [];
+
+    // Eliminar el polígono y marcarlo como abierto
+    if (poligono) {
+        mapa.removeLayer(poligono);
+        poligono = null;
+    }
+
+    // Limpiar la línea guía
+    lineaGuia.setLatLngs([]);
+
+    // Guardar el estado después de limpiar todo
+    guardarPuntos();
+
+    // Actualizar la interfaz
+    actualizarTablaCoordenadas();
+    actualizarBotones();
+
+    mostrarInfo('Mapa limpio. Haz clic para empezar de nuevo.');
+}
  
 document.getElementById('btnDeshacer').addEventListener('click', deshacerPunto); 
 document.getElementById('btnLimpiar').addEventListener('click', limpiar);
@@ -352,30 +379,35 @@ function guardarPuntos() {
 function recuperarPuntos() {
     const datosGuardados = localStorage.getItem('puntosPoligono');
 
-    if (datosGuardados) {
-        puntos = JSON.parse(datosGuardados);
-
-        // Dibujar los vértices recuperados
-        puntos.forEach((punto) => {
-            const v = L.circleMarker(punto, {
-                radius: 6,
-                color: selectorColor.value,
-                fillColor: selectorColor.value,
-                fillOpacity: 1
-            }).addTo(mapa);
-
-            vertices.push(v);
-        });
-
-        // Volver a mostrar la línea y la tabla
-        lineaGuia.setLatLngs(puntos);
+    if (!datosGuardados) {
         actualizarTablaCoordenadas();
         actualizarBotones();
+        return;
+    }
 
-        const cerrado = JSON.parse(localStorage.getItem('poligonoCerrado') || 'false');
+    puntos = JSON.parse(datosGuardados);
 
-        if (cerrado && puntos.length >= 3) {
-            poligono = L.polygon(puntos, {
+    // Dibujar los vértices recuperados
+    puntos.forEach((punto) => {
+        const v = L.circleMarker(punto, {
+            radius: 6,
+            color: selectorColor.value,
+            fillColor: selectorColor.value,
+            fillOpacity: 1
+        }).addTo(mapa);
+
+        vertices.push(v);
+    });
+
+    actualizarTablaCoordenadas();
+
+    // Recuperar el estado del polígono
+    const cerrado = JSON.parse(
+        localStorage.getItem('poligonoCerrado') || 'false'
+    );
+
+    if (cerrado && puntos.length >= 3) {
+        poligono = L.polygon(puntos, {
             color: selectorColor.value,
             fillColor: selectorColor.value,
             fillOpacity: 0.35
@@ -393,10 +425,75 @@ function recuperarPuntos() {
         mostrarInfo(
             `Polígono recuperado. Área: ${area.toFixed(1)} m².`
         );
-    }
-
+    } else {
+        lineaGuia.setLatLngs(puntos);
         mostrarInfo('Se recuperaron los vértices guardados.');
     }
+
+    // Actualizar los botones después de recuperar el estado
+    actualizarBotones();
 }
+
+
+
+/* Reto 6. Importar un archivo GeoJSON */
+document.getElementById('archivoGeoJSON').addEventListener('change', (e) => {
+    const archivo = e.target.files[0];
+
+    // Verificar que se haya seleccionado un archivo
+    if (!archivo) {
+        return;
+    }
+
+    // Leer el contenido del archivo
+    const lector = new FileReader();
+
+    lector.onload = (evento) => {
+        try {
+            // Convertir el texto del archivo a un objeto JavaScript
+            const datos = JSON.parse(evento.target.result);
+
+            // Dibujar los datos GeoJSON en el mapa
+            const capaImportada = L.geoJSON(datos, {
+                style: {
+                    color: selectorColor.value,
+                    fillColor: selectorColor.value,
+                    fillOpacity: 0.35
+                },
+                pointToLayer: (feature, latlng) => {
+                    return L.circleMarker(latlng, {
+                        radius: 6,
+                        color: selectorColor.value,
+                        fillColor: selectorColor.value,
+                        fillOpacity: 1
+                    });
+                }
+            }).addTo(mapa);
+
+            // Ajustar el mapa para mostrar los datos importados
+            if (capaImportada.getLayers().length > 0) {
+                mapa.fitBounds(capaImportada.getBounds());
+                mostrarInfo('Archivo GeoJSON importado correctamente.');
+            } else {
+                mostrarInfo('El archivo no contiene elementos para dibujar.');
+                mapa.removeLayer(capaImportada);
+            }
+
+        } catch (error) {
+            mostrarInfo('Error: el archivo no contiene un GeoJSON válido.');
+            console.error(error);
+        }
+    };
+
+    lector.onerror = () => {
+        mostrarInfo('No se pudo leer el archivo seleccionado.');
+    };
+
+    lector.readAsText(archivo);
+
+    // Permitir seleccionar el mismo archivo nuevamente
+    e.target.value = '';
+});
+
 
 recuperarPuntos();
