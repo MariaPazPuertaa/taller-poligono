@@ -3,75 +3,121 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Define el título que aparece en la pestaña del navegador -->
   <title>Polígono con geolocalización</title>
+
+  <!-- Carga los estilos de Leaflet para mostrar correctamente el mapa y sus elementos -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <!-- Conecta el archivo de estilos -->
   <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
+  <!--  Es el encabezado que contiene el título, los controles y los mensajes informativos -->
   <header>
+    <!-- Título principal -->
     <h1>Mi polígono</h1>
 
+      <!-- Contenedor general que agrupa los botones y las opciones de configuración -->
       <div class="controles">
-  <div class="botones">
-    <button id="btnUbicar">Mi ubicación</button>
-    <button id="btnCerrar">Cerrar polígono</button>
-    <button id="btnDeshacer">Deshacer punto</button>
 
-    <button id="btnLimpiar">Limpiar</button>
-    <button id="btnExportar">Exportar GeoJSON</button>
-    <button id="btnAgregarUbicacion">Agregar vértice aquí</button>
+        <!-- Botones para controlar el mapa y el polígono -->
+        <div class="botones">
 
-    <button id="verificarUbicacion">Verificar si estoy dentro</button>
-    <button id="btnIniciarGeocerca">Iniciar seguimiento</button>
-    <button id="btnDetenerGeocerca" disabled>Detener seguimiento</button>
-  </div>
+          <!-- Solicita la ubicación actual del usuario -->
+          <button id="btnUbicar">Mi ubicación</button>
 
-  <div class="opciones">
-    <label class="control-color" for="colorPoligono">Color del polígono
-      <input type="color" id="colorPoligono" value="#27ae60">
-    </label>
+          <!-- Cierra el polígono utilizando los vértices agregados -->
+          <button id="btnCerrar">Cerrar polígono</button>
 
-    <label class="control-nombre" for="nombrePoligono">Nombre del polígono
-      <input type="text" id="nombrePoligono" placeholder="Ej. Mi terreno" maxlength="60">
-    </label>
+          <!-- Elimina el último vértice agregado -->
+          <button id="btnDeshacer">Deshacer punto</button>
 
-    <div class="control-archivo">
-      <label for="archivoGeoJSON">Importar GeoJSON</label>
-      <input type="file" id="archivoGeoJSON" accept=".geojson,.json,application/geo+json,application/json">
-    </div>
-  </div>
-</div>
+          <!-- Limpia los puntos o vértices y el polígono dibujado -->
+          <button id="btnLimpiar">Limpiar</button>
 
-      <p id="info">Haz clic en el mapa para agregar vértices.</p>
-    </header>
+          <!-- Exporta el polígono en formato GeoJSON -->
+          <button id="btnExportar">Exportar GeoJSON</button>
 
-    <!-- Reto 1: tabla de coordenadas -->
-    <section>
-      <h2>Coordenadas de los vértices</h2>
+          <!-- Agrega la ubicación actual como un nuevo vértice -->
+          <button id="btnAgregarUbicacion">Agregar vértice aquí</button>
 
-      <div class="tabla-contenedor">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Latitud</th>
-              <th>Longitud</th>
-            </tr>
-          </thead>
+          <!-- Comprueba si la ubicación actual está dentro del polígono -->
+          <button id="verificarUbicacion">Verificar si estoy dentro</button>
 
-          <tbody id="tablaCoordenadas">
-            <tr>
-              <td colspan="3">Todavía no hay vértices.</td>
-            </tr>
-            </tbody>
-        </table>
+          <!-- Inicia el seguimiento de la ubicación para comprobar la geocerca -->
+          <button id="btnIniciarGeocerca">Iniciar seguimiento</button>
+
+          <!-- Detiene el seguimiento de la ubicación e inicialmente está deshabilitado -->
+          <button id="btnDetenerGeocerca" disabled>Detener seguimiento</button>
+        </div>
+
+        <!-- Opciones para personalizar el polígono e importar archivos -->
+        <div class="opciones">
+
+          <!-- Permite seleccionar el color del polígono -->
+          <label class="control-color" for="colorPoligono">Color del polígono
+            <input type="color" id="colorPoligono" value="#27ae60">
+          </label>
+
+          <!-- Permite introducir el nombre que utilizará el polígono -->
+        <label class="control-nombre" for="nombrePoligono">Nombre del polígono
+          <input type="text" id="nombrePoligono" placeholder="Ej. Mi terreno" maxlength="60">
+        </label>
+
+        <!-- Permite seleccionar un archivo GeoJSON o JSON para importarlo en el mapa -->
+        <div class="control-archivo">
+          <label for="archivoGeoJSON">Importar GeoJSON</label>
+            <input type="file" id="archivoGeoJSON" accept=".geojson,.json,application/geo+json,application/json">
+        </div>
       </div>
-    </section>
+    </div>
 
-    <div id="mapa"></div>
+    <!-- Muestra instrucciones y mensajes informativos al usuario -->
+    <p id="info">Haz click en el mapa para agregar vértices.</p>
+  </header>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
-    <script src="app.js"></script>
+  <!-- Reto 1: Tabla de coordenadas -->
+  <section>
+    <!-- Título de la sección de los vértices del polígono -->
+    <h2>Coordenadas de los vértices</h2>
+
+    <!-- Contenedor que permite organizar la tabla mediante CSS -->
+    <div class="tabla-contenedor">
+
+      <!-- Tabla para mostrar el número, la latitud y la longitud de cada vértice -->
+      <table>
+        <!-- Subtítulos de las columnas de la tabla -->
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Latitud</th>
+            <th>Longitud</th>
+          </tr>
+        </thead>
+
+        <!-- Es un contenedor para actualizar las coordenadas de la tabla -->
+        <tbody id="tablaCoordenadas">
+          <tr>
+            <!-- Mensaje que aparece mientras no se hayan agregado vértices -->
+            <td colspan="3">Todavía no hay vértices.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Contenedor donde Leaflet mostrará el mapa -->
+  <div id="mapa"></div>
+
+  <!-- Carga la biblioteca Leaflet para crear y controlar el mapa -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Carga Turf.js para realizar operaciones geográficas y cálculos espaciales -->
+  <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
+
+  <!-- Carga el JavaScript del proyecto, que controla los botones y la lógica del mapa -->
+  <script src="app.js"></script>
 </body>
 </html>

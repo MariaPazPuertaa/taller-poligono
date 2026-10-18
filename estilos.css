@@ -18,7 +18,6 @@ h1 {
     font-size: 1.3rem;
 }
 
-
 /* Contenedor de todos los controles */
 .controles {
     display: flex;
@@ -27,13 +26,14 @@ h1 {
     max-width: 760px;
 }
 
-/* Cuadrícula de botones: columnas del mismo ancho */
+/* Cuadrícula de botones con columnas del mismo ancho */
 .botones {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
 }
 
+/* Define el tamaño, el color y la apariencia de los botones de los controles */
 .botones button {
     padding: 9px 8px;
     font-size: 0.85rem;
@@ -44,11 +44,12 @@ h1 {
     transition: background .15s;
 }
 
+/* Cambia el fondo del botón cuando el cursor pasa sobre él */
 .botones button:hover:not(:disabled) {
     background: #1c6ad8;
 }
 
-/* Deshabilitado legible, no casi invisible */
+/* Botón deshabilitado legible */
 .botones button:disabled {
     background: #3b5272;
     color: #9fb3cc;
@@ -56,13 +57,14 @@ h1 {
     cursor: not-allowed;
 }
 
-/* Fila de opciones: color, nombre, importar */
+/* Fila de opciones para modificar el color, nombre, importar, entre otras */
 .opciones {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
 }
 
+/* Organiza y da formato a los controles de color, nombre e importación */
 .control-color,
 .control-nombre,
 .control-archivo {
@@ -79,6 +81,7 @@ h1 {
     box-sizing: border-box;
 }
 
+/* Define el tamaño y la apariencia del selector de color */
 .control-color input[type="color"] {
     width: 32px;
     height: 26px;
@@ -88,6 +91,7 @@ h1 {
     cursor: pointer;
 }
 
+/* Organiza el campo donde se escribe el nombre del polígono */
 .control-nombre input[type="text"] {
     flex: 1;
     min-width: 0;
@@ -102,6 +106,7 @@ h1 {
     box-sizing: border-box;
 }
 
+/* Resalta el campo del nombre cuando está seleccionado */
 .control-nombre input[type="text"]:focus {
     border-color: #60a5fa;
     box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.25);
@@ -115,6 +120,7 @@ h1 {
     color: white;
 }
 
+/* Personaliza el botón que permite seleccionar un archivo */
 .control-archivo input[type="file"]::file-selector-button {
     padding: 4px 8px;
     margin-right: 6px;
@@ -125,12 +131,14 @@ h1 {
     cursor: pointer;
 }
 
-/* Tablet y móvil */
+/* Tablet y celular */
 @media (max-width: 700px) {
+    /* Coloca las opciones en una sola columna en pantallas pequeñas */
     .opciones { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 480px) {
+    /* Organiza los botones en dos columnas en celulares pequeños */
     .botones { grid-template-columns: repeat(2, 1fr); }
 }
 
@@ -155,7 +163,7 @@ button:disabled {
     font-size: .9rem;
 }
 
-/* Reto 1: contenedor de la tabla de coordenadas */
+/* Reto 1: Contenedor de la tabla de coordenadas */
 section {
     margin: 14px 16px;
     padding: 16px;
