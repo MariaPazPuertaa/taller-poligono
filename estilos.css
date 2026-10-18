@@ -2,9 +2,7 @@
 body {
     margin: 0;
     font-family: system-ui, sans-serif;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 /* Encabezado de la página */
@@ -20,11 +18,120 @@ h1 {
     font-size: 1.3rem;
 }
 
-/* Organiza los botones y controles en filas */
+
+/* Contenedor de todos los controles */
 .controles {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 760px;
+}
+
+/* Cuadrícula de botones: columnas del mismo ancho */
+.botones {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 8px;
+}
+
+.botones button {
+    padding: 9px 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: white;
+    background: #2f80ed;
+    border-radius: 6px;
+    transition: background .15s;
+}
+
+.botones button:hover:not(:disabled) {
+    background: #1c6ad8;
+}
+
+/* Deshabilitado legible, no casi invisible */
+.botones button:disabled {
+    background: #3b5272;
+    color: #9fb3cc;
+    opacity: 1;
+    cursor: not-allowed;
+}
+
+/* Fila de opciones: color, nombre, importar */
+.opciones {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.control-color,
+.control-nombre,
+.control-archivo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 40px;
+    padding: 6px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: white;
+    box-sizing: border-box;
+}
+
+.control-color input[type="color"] {
+    width: 32px;
+    height: 26px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.control-nombre input[type="text"] {
+    flex: 1;
+    min-width: 0;
+    height: 26px;
+    padding: 3px 6px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    background: white;
+    color: #334155;
+    font-size: 0.85rem;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.control-nombre input[type="text"]:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.25);
+}
+
+/* El texto de "Ningún archivo" se corta en vez de desbordar */
+.control-archivo input[type="file"] {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.75rem;
+    color: white;
+}
+
+.control-archivo input[type="file"]::file-selector-button {
+    padding: 4px 8px;
+    margin-right: 6px;
+    border: none;
+    border-radius: 4px;
+    background: #2f80ed;
+    color: white;
+    cursor: pointer;
+}
+
+/* Tablet y móvil */
+@media (max-width: 700px) {
+    .opciones { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+    .botones { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* Estilo general de los botones */
@@ -33,6 +140,7 @@ button {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    box-sizing: border-box;
 }
 
 /* Indica visualmente cuándo un botón está deshabilitado */
@@ -125,88 +233,7 @@ section td:first-child {
 
 /* Hace que el mapa ocupe el espacio restante de la página */
 #mapa {
-    flex: 1;
-    min-height: 0;
+    height: 70vh;
+    min-height: 350px;
     width: 100%;
-}
-
-/* Reto 2: organiza y da estilo al control para elegir el color del polígono */
-.control-color {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 5px 10px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 4px;
-    color: white;
-    font-size: 0.9rem;
-    cursor: pointer;
-    box-sizing: border-box;
-    height: 36px;
-}
-
-/* Ajusta el tamaño y la apariencia del selector de color */
-.control-color input[type="color"] {
-    width: 32px;
-    height: 26px;
-    padding: 2px;
-    border: none;
-    border-radius: 4px;
-    background: transparent;
-    cursor: pointer;
-    box-sizing: border-box;
-}
-
-/* Reto 3: organiza y da estilo al campo para escribir el nombre del polígono */
-.control-nombre {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 5px 10px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 4px;
-    color: white;
-    font-size: 0.9rem;
-    box-sizing: border-box;
-    height: 36px;
-}
-
-/* Da estilo al campo de texto donde se escribe el nombre del polígono */
-.control-nombre input {
-    width: 150px;
-    padding: 4px 8px;
-    border: 1px solid #cbd5e1;
-    border-radius: 4px;
-    background: white;
-    color: #334155;
-    font-size: 0.9rem;
-    outline: none;
-    box-sizing: border-box;
-    height: 26px;
-}
-
-/* Resalta el campo cuando el usuario hace clic para escribir */
-.control-nombre input:focus {
-    border-color: #60a5fa;
-    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.25);
-}
-
-
-/* Reto 6. Estilo del botón para importar GeoJSON */
-.boton-importar {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-    height: 36px;
-    padding: 6px 12px;
-    border-radius: 4px;
-    background: #1e3a5f;
-    color: white;
-    font-size: 0.9rem;
-    cursor: pointer;
-}
-
-.boton-importar:hover {
-    background: #2c5282;
 }

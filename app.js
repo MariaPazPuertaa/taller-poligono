@@ -160,19 +160,11 @@ function cerrarPoligono() {
     console.log('Polígono GeoJSON:', geo);
     console.log('Cruces detectados:', cruces.features);
 
+    // Reto 9: detectar cruces
     if (cruces.features.length > 0) {
         mostrarInfo(
             `Se detectaron ${cruces.features.length} cruces. ` +
             'Revisa el orden de los vértices.'
-        );
-        return;
-    }
-
-    // Reto 9: detectar cruces
-    if (turf.kinks(geo).features.length > 0) {
-        mostrarInfo(
-            '¡Error! El polígono se cruza consigo mismo. ' +
-            'Modifica los vértices antes de cerrarlo.'
         );
         return;
     }
@@ -227,6 +219,11 @@ function deshacerPunto() {
 }
  
 function limpiar() {
+    // Detener la geocerca si está activa
+    if (seguimientoId !== null) {
+        detenerGeocerca();
+    }
+    
     // Eliminar los marcadores de los vértices
     vertices.forEach((v) => mapa.removeLayer(v));
     vertices = [];

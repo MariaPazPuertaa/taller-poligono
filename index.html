@@ -1,76 +1,77 @@
-<!DOCTYPE html> 
-<html lang="es"> 
-<head> 
-  <meta charset="UTF-8"> 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-  <title>Polígono con geolocalización</title> 
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"> 
-  <link rel="stylesheet" href="estilos.css"> 
-</head> 
-<body> 
-  <header> 
-    <h1>Mi polígono</h1> 
-    <div class="controles"> 
-      <button id="btnUbicar">Mi ubicación</button> 
-      <button id="btnCerrar" >Cerrar polígono</button> 
-      <button id="btnDeshacer">Deshacer punto</button> 
-      <button id="btnLimpiar">Limpiar</button> 
-      <button id="btnExportar">Exportar GeoJSON</button> 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Polígono con geolocalización</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <header>
+    <h1>Mi polígono</h1>
 
-      <!-- Reto 8: geocerca en tiempo real -->
-      <button id="btnIniciarGeocerca">Iniciar seguimiento</button>
-      <button id="btnDetenerGeocerca" disabled>Detener seguimiento</button>
+      <div class="controles">
+  <div class="botones">
+    <button id="btnUbicar">Mi ubicación</button>
+    <button id="btnCerrar">Cerrar polígono</button>
+    <button id="btnDeshacer">Deshacer punto</button>
 
-      <!-- Reto 7: Detectar si el usuario está dentro o fuera -->
-      <button id="verificarUbicacion">Verificar si estoy dentro</button>
+    <button id="btnLimpiar">Limpiar</button>
+    <button id="btnExportar">Exportar GeoJSON</button>
+    <button id="btnAgregarUbicacion">Agregar vértice aquí</button>
 
-      <!-- Reto 4: Agrega un vértice usando la ubicación actual -->
-      <button id="btnAgregarUbicacion">Agregar vértice aquí</button>
+    <button id="verificarUbicacion">Verificar si estoy dentro</button>
+    <button id="btnIniciarGeocerca">Iniciar seguimiento</button>
+    <button id="btnDetenerGeocerca" disabled>Detener seguimiento</button>
+  </div>
 
-      <!-- Reto 2. Opción de escoger el color del polígono -->
-      <label for="colorPoligono" class="control-color">  Color del polígono
-        <input type="color" id="colorPoligono" value="#27ae60">
-      </label>
-      
-      <label class="control-nombre" for="nombrePoligono">Nombre del polígono
-        <input type="text" id="nombrePoligono" placeholder="Ej. Mi terreno" maxlength="60">
-      </label>
-      
-      <!-- Reto 6: seleccionar un archivo GeoJSON para importarlo -->
+  <div class="opciones">
+    <label class="control-color" for="colorPoligono">Color del polígono
+      <input type="color" id="colorPoligono" value="#27ae60">
+    </label>
+
+    <label class="control-nombre" for="nombrePoligono">Nombre del polígono
+      <input type="text" id="nombrePoligono" placeholder="Ej. Mi terreno" maxlength="60">
+    </label>
+
+    <div class="control-archivo">
       <label for="archivoGeoJSON">Importar GeoJSON</label>
-        <input type="file" id="archivoGeoJSON" accept=".geojson,.json,application/geo+json,application/json">
-    </div> 
-    <p id="info">Haz clic en el mapa para agregar vértices.</p> 
-  </header> 
+      <input type="file" id="archivoGeoJSON" accept=".geojson,.json,application/geo+json,application/json">
+    </div>
+  </div>
+</div>
+
+      <p id="info">Haz clic en el mapa para agregar vértices.</p>
+    </header>
 
     <!-- Reto 1: tabla de coordenadas -->
-  <section>
-    <h2>Coordenadas de los vértices</h2>
+    <section>
+      <h2>Coordenadas de los vértices</h2>
 
-    <div class="tabla-contenedor">
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Latitud</th>
-            <th>Longitud</th>
-          </tr>
-        </thead>
+      <div class="tabla-contenedor">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Latitud</th>
+              <th>Longitud</th>
+            </tr>
+          </thead>
 
-        <tbody id="tablaCoordenadas">
-          <tr>
-            <td colspan="3">Todavía no hay vértices.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
+          <tbody id="tablaCoordenadas">
+            <tr>
+              <td colspan="3">Todavía no hay vértices.</td>
+            </tr>
+            </tbody>
+        </table>
+      </div>
+    </section>
 
+    <div id="mapa"></div>
 
-  <div id="mapa"></div> 
- 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script> 
-  <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script> 
-  <script src="app.js"></script> 
-</body> 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
+    <script src="app.js"></script>
+</body>
 </html>
