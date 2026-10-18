@@ -578,4 +578,122 @@ function verificarUbicacion() {
 document.getElementById('verificarUbicacion').addEventListener('click', verificarUbicacion);
 
 
+
+/* Reto 8. Geocerca en tiempo real */
+
+let seguimientoId = null;
+let ultimaPosicionDentro = null;
+
+function iniciarGeocerca() {
+    // El polígono debe estar cerrado
+    if (poligono === null) {
+        mostrarInfo('Primero debes dibujar y cerrar el polígono.');
+        return;
+    }
+
+    // Evitar iniciar varios seguimientos simultáneos
+    if (seguimientoId !== null) {
+        mostrarInfo('El seguimiento ya está activo.');
+        return;
+    }
+
+    if (!('geolocation' in navigator)) {
+        mostrarInfo('Tu navegador no soporta geolocalización.');
+        return;
+    }
+
+    ultimaPosicionDentro = null;
+    mostrarInfo('Seguimiento activo. Comprobando tu ubicación...');
+
+    document.getElementById('btnIniciarGeocerca').disabled = true;
+    document.getElementById('btnDetenerGeocerca').disabled = false;
+
+    seguimientoId = navigator.geolocation.watchPosition(
+        (pos) => {
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+
+            const puntoUsuario = turf.point([lng, lat]);
+            const geo = aGeoJSON();
+
+            const estaDentro = turf.booleanPointInPolygon(
+                puntoUsuario,
+                geo
+            );
+
+            // Actualizar o crear el marcador de ubicación
+            if (marcadorUsuario) {
+                marcadorUsuario.setLatLng([lat, lng]);
+            } else {
+                marcadorUsuario = L.marker([lat, lng]).addTo(mapa);
+            }
+
+            marcadorUsuario.bindPopup(
+                estaDentro
+                    ? 'Estás dentro de la geocerca'
+                    : '¡Estás fuera de la geocerca!'
+            );
+
+            // Avisar solamente cuando se cruza el límite
+            if (
+                ultimaPosicionDentro === true &&
+                estaDentro === false
+            ) {
+                mostrarInfo('¡ALERTA! Has salido de la geocerca.');
+                alert('¡Atención! Has salido del polígono.');
+            } else if (
+                ultimaPosicionDentro === false &&
+                estaDentro === true
+            ) {
+                mostrarInfo('Has vuelto a entrar en la geocerca.');
+                alert('Has vuelto a entrar en el polígono.');
+            } else if (ultimaPosicionDentro === null) {
+                mostrarInfo(
+                    estaDentro
+                        ? 'Seguimiento activo: estás dentro de la geocerca.'
+                        : 'Seguimiento activo: estás fuera de la geocerca.'
+                );
+            }
+
+            ultimaPosicionDentro = estaDentro;
+        },
+        (err) => {
+            const mensajes = {
+                1: 'Permiso de ubicación denegado.',
+                2: 'No se pudo determinar tu ubicación.',
+                3: 'Se agotó el tiempo de espera.'
+            };
+
+            mostrarInfo(
+                mensajes[err.code] || 'Error al rastrear la ubicación.'
+            );
+
+            detenerGeocerca();
+        },
+        {
+            enableHighAccuracy: true,
+            maximumAge: 0,
+            timeout: 15000
+        }
+    );
+}
+
+function detenerGeocerca() {
+    if (seguimientoId !== null) {
+        navigator.geolocation.clearWatch(seguimientoId);
+        seguimientoId = null;
+    }
+
+    document.getElementById('btnIniciarGeocerca').disabled = false;
+    document.getElementById('btnDetenerGeocerca').disabled = true;
+
+    ultimaPosicionDentro = null;
+    mostrarInfo('Seguimiento detenido.');
+}
+
+document.getElementById('btnIniciarGeocerca').addEventListener('click', iniciarGeocerca);
+
+document.getElementById('btnDetenerGeocerca').addEventListener('click', detenerGeocerca);
+
+
 recuperarPuntos();
