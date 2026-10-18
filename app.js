@@ -152,7 +152,32 @@ function medir() {
     return { area, perimetro }; 
 } 
  
-function cerrarPoligono() { 
+function cerrarPoligono() {
+    const geo = aGeoJSON();
+    const cruces = turf.kinks(geo);
+
+    console.log('Puntos dibujados:', puntos);
+    console.log('Polígono GeoJSON:', geo);
+    console.log('Cruces detectados:', cruces.features);
+
+    if (cruces.features.length > 0) {
+        mostrarInfo(
+            `Se detectaron ${cruces.features.length} cruces. ` +
+            'Revisa el orden de los vértices.'
+        );
+        return;
+    }
+
+    // Reto 9: detectar cruces
+    if (turf.kinks(geo).features.length > 0) {
+        mostrarInfo(
+            '¡Error! El polígono se cruza consigo mismo. ' +
+            'Modifica los vértices antes de cerrarlo.'
+        );
+        return;
+    }
+
+    // Si no hay cruces, continúa tu código original
     poligono = L.polygon(puntos, {
         color: selectorColor.value,
         fillColor: selectorColor.value,
@@ -160,15 +185,23 @@ function cerrarPoligono() {
     }).addTo(mapa);
 
     guardarPuntos();
+    lineaGuia.setLatLngs([]);
+    mapa.fitBounds(poligono.getBounds());
 
-    lineaGuia.setLatLngs([]); 
-    mapa.fitBounds(poligono.getBounds()); 
- 
-    const { area, perimetro } = medir(); 
-    poligono.bindPopup(`Área: ${area.toFixed(1)} m²<br>Perímetro: ${perimetro.toFixed(1)} m`).openPopup(); 
-    mostrarInfo(`Polígono cerrado. Área: ${area.toFixed(1)} m² (${(area / 10000).toFixed(3)} ha).`); 
-    actualizarBotones(); 
-} 
+    const { area, perimetro } = medir();
+
+    poligono.bindPopup(
+        `Área: ${area.toFixed(1)} m²<br>` +
+        `Perímetro: ${perimetro.toFixed(1)} m`
+    ).openPopup();
+
+    mostrarInfo(
+        `Polígono cerrado. Área: ${area.toFixed(1)} m² ` +
+        `(${(area / 10000).toFixed(3)} ha).`
+    );
+
+    actualizarBotones();
+}
 document.getElementById('btnCerrar').addEventListener('click', cerrarPoligono);
 
 function deshacerPunto() {
